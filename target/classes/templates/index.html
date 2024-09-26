@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Residents Database</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      color: #333;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      max-width: 800px;
+      min-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      width: 70%;
+      text-align: left;
+    }
+ 
+    .form-group input {
+      width: 70%;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .btn {
+      display: block;
+      width: 25%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px auto; /* Add margin to create space between buttons */
+    }
+    
+    .btn:hover {
+      background-color: #0056b3;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      width: 300px
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+
+    .add-resident-link {
+      display: inline-block;
+      margin: 20px 0;
+      font-size: 18px;
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .add-resident-link:hover {
+      color: #0056b3;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Residents Database</h1>
+
+    <!-- Search Form -->
+    <form id="searchForm">
+      <div class="form-group">
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName">
+      </div>
+
+      <div class="form-group">
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName">
+      </div>
+
+      <div class="form-group">
+        <label for="unitNumber">Unit Number:</label>
+        <input type="text" id="unitNumber" name="unitNumber">
+      </div>
+
+      <div class="form-group">
+        <label for="moveInDate">Move-in Date:</label>
+        <input type="date" id="moveInDate" name="moveInDate">
+      </div>
+
+      <button type="submit" class="btn">Search</button>
+
+      <div>
+        <p style="text-align: center;">To add a new resident, <a th:href="@{/add-resident}" class="add-resident-link">click here</a>.</p>
+      </div>
+
+    </form>
+
+    <!-- Residents List -->
+    <table>
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Unit Number</th>
+          <th>Move-in Date</th>
+        </tr>
+      </thead>
+      <tbody id="residentsList">
+        <!-- Residents will be dynamically added here -->
+      </tbody>
+    </table>
+  </div>
+
+
+  <script>
+    console.log("Script loaded");
+
+    const searchForm = document.getElementById('searchForm');
+    if (searchForm) {
+        console.log("Search form found");
+        searchForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            console.log("Form submitted");
+
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const unitNumber = document.getElementById('unitNumber').value;
+            const moveInDate = document.getElementById('moveInDate').value;
+
+            console.log(`Searching for: ${firstName} ${lastName} ${unitNumber} ${moveInDate}`);
+
+            fetch(`/residents?firstName=${firstName}&lastName=${lastName}&unitNumber=${unitNumber}&moveInDate=${moveInDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); // Log the response data to the console
+                    const residentsList = document.getElementById('residentsList');
+                    residentsList.innerHTML = '';
+                    data.forEach(resident => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${resident.firstName}</td>
+                            <td>${resident.lastName}</td>
+                            <td>${resident.unitNumber}</td>
+                            <td>${resident.moveInDate}</td>
+                        `;
+                        residentsList.appendChild(row);
+                    });
+                });
+        });
+    } else {
+        console.log("Search form not found");
+    }
+  </script>
+</body>
+</html>
